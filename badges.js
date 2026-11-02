@@ -584,7 +584,6 @@ void (async () => {
     let GAMES = [];
 
     const DEFAULTS = {
-        minimized: false,
         corner: "bottom-right",
         batchTotalHours: 6000,
         batchCount: 250,
@@ -599,7 +598,6 @@ void (async () => {
         let saved = {};
         try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch (_) {}
         const s = { ...DEFAULTS, ...saved };
-        s.minimized = Boolean(s.minimized);
         s.batchTotalHours = clamp(Number(s.batchTotalHours) || DEFAULTS.batchTotalHours, 0.1, 999999);
         s.batchCount = Math.max(0, Math.floor(Number(s.batchCount) || DEFAULTS.batchCount));
         s.batchChunk = clamp(Math.floor(Number(s.batchChunk)) || DEFAULTS.batchChunk, 1, 500);
@@ -1223,9 +1221,6 @@ void (async () => {
         const shadow = host.attachShadow({ mode: "open" });
 
         const ICON = {
-            pad: `<svg viewBox="0 0 24 24"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><path d="M17.32 5H6.68a4 4 0 0 0-3.98 3.59l-.9 7.79A2.5 2.5 0 0 0 4.29 19c.9 0 1.73-.48 2.17-1.27L7.5 16h9l1.04 1.73c.44.79 1.27 1.27 2.17 1.27a2.5 2.5 0 0 0 2.49-2.62l-.9-7.79A4 4 0 0 0 17.32 5z"/></svg>`,
-            gear: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
-            min: `<svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg>`,
             close: `<svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>`,
             bolt: `<svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>`
         };
@@ -1269,13 +1264,6 @@ svg { width:16px; height:16px; display:block; fill:none; stroke:currentColor; st
  .head-subtitle { margin-top:3px; color:var(--muted); font-size:10.5px; line-height:1.35; }
  .panel.mode-selecting .head { align-items:flex-start; justify-content:space-between; margin-bottom:10px; }
  .panel.mode-selecting .badge { display:none; }
-.mini { display:none; width:48px; height:48px; border-radius:16px; color:#fff;
-        background:linear-gradient(135deg,rgba(142,161,255,.88),rgba(100,116,230,.88));
-        backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:0 10px 24px rgba(99,102,241,.45); }
-.mini svg { width:22px; height:22px; }
-:host(.minimized) .panel { display:none; }
-:host(.minimized) .mini { display:grid; place-items:center; }
-
 .head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; cursor:grab; }
 .badge { display:none; align-items:center; gap:7px; padding:5px 10px 5px 9px; border-radius:999px;
          background:var(--bg-2); border:1px solid var(--line);
@@ -1371,8 +1359,6 @@ button { letter-spacing:.01em; }
 .tool, .btn, input { border-radius:6px !important; }
 .knob { border-radius:999px !important; }
 .knob::after { border-radius:50% !important; }
-.mini { background:var(--accent) !important; border:1px solid var(--line-strong); box-shadow:none !important; }
-
 .mode-picker { margin:0; }
  .mode-card.card { padding:0 !important; background:transparent !important; border:0 !important; }
 .mode-choice { padding:12px; background:var(--bg-2) !important; border:1px solid var(--line) !important;
@@ -1430,10 +1416,6 @@ button { letter-spacing:0; }
 .tool + .tool { border-left-color:transparent; }
 .tool:hover, .tool.on { background:var(--bg-3) !important; border-color:var(--line-strong); color:var(--accent); transform:translateY(-1px); }
 .tool.close:hover { background:rgba(239,68,68,.12) !important; border-color:rgba(239,68,68,.55); color:var(--danger); }
-.mini { background:var(--accent) !important; border:1px solid rgba(255,255,255,.18); border-radius:6px !important;
-        box-shadow:0 10px 30px rgba(131,85,211,.32) !important; cursor:grab; touch-action:none; }
-.mini:active { cursor:grabbing; }
-
 .mode-picker { margin:0; }
 .mode-card.card { padding:0 !important; background:transparent !important; border:0 !important; }
 .mode-choice { padding:16px; background:rgba(28,28,28,.86) !important; border:2px solid rgba(48,48,48,.88) !important;
@@ -1497,51 +1479,84 @@ input:focus { border-color:var(--accent) !important; box-shadow:0 0 0 2px var(--
 .credit { margin-top:12px; color:var(--muted); font-size:9px; line-height:1.2; text-align:center; letter-spacing:.04em; }
 .credit span { color:var(--accent-2); font-weight:600; }
 
-/* Refined multicolor dashboard theme. */
-:host { --accent:#a78bfa; --accent-2:#67e8f9; --accent-soft:rgba(167,139,250,.16);
-        --bg:rgba(12,15,27,.97); --bg-2:rgba(23,28,44,.94); --bg-3:rgba(36,43,64,.96);
-        --line:rgba(154,169,208,.16); --line-strong:rgba(154,169,208,.28);
-        --text:#f4f6ff; --muted:#9aa8c2; --soft:#d5ddf0; }
-.panel { background:radial-gradient(ellipse at 12% 0%,rgba(126,91,224,.18),transparent 42%),var(--bg) !important;
-         border:1px solid var(--line-strong) !important; border-radius:18px !important;
-         box-shadow:0 22px 55px rgba(0,0,0,.5),0 0 32px rgba(103,232,249,.06) !important; }
-.head { border-bottom-color:var(--line) !important; }
-.head-title { font-size:14px; font-weight:700; letter-spacing:-.025em; }
-.head-subtitle { font-size:10.5px; }
-.tool { border-radius:9px !important; }
-.tool:hover, .tool.on { color:var(--accent-2); background:rgba(103,232,249,.08) !important; }
-.mini { background:linear-gradient(135deg,#a78bfa,#6875ed) !important; border-radius:14px !important; }
-.card { background:linear-gradient(145deg,rgba(30,36,55,.96),rgba(20,25,40,.96)) !important;
-        border:1px solid var(--line) !important; border-radius:14px !important; }
-.card-head { border-bottom-color:var(--line) !important; }
-.card-head h4 { color:var(--soft); }
-.field > span { color:#b3bfd5; }
-input { background:rgba(10,14,25,.82) !important; border-color:var(--line) !important; border-radius:9px !important; }
-input:focus { border-color:var(--accent-2) !important; box-shadow:0 0 0 3px rgba(103,232,249,.12) !important; }
-.btn { border-radius:10px !important; font-weight:650; }
-.claim { background:linear-gradient(100deg,#8b72ed,#6875ed 58%,#4bbbd0) !important;
-         box-shadow:0 8px 24px rgba(104,117,237,.25) !important; }
-.claim:hover { background:linear-gradient(100deg,#a18cf4,#7d89f5 58%,#62d1e2) !important; }
-.claim.running { background:var(--bg-3) !important; }
-.claim.done { background:linear-gradient(100deg,#16a765,#42c98a) !important; }
-.claim.failed { background:linear-gradient(100deg,#dc4658,#f0786e) !important; }
-.summary { gap:7px; }
-.stat { border-radius:10px !important; background:rgba(12,17,30,.78) !important; }
-.stat:nth-child(1) { border-color:rgba(167,139,250,.3); }
-.stat:nth-child(1) b { color:#c4b5fd; }
-.stat:nth-child(2) { border-color:rgba(103,232,249,.26); }
-.stat:nth-child(2) b { color:#67e8f9; }
-.stat:nth-child(3) { border-color:rgba(110,231,183,.24); }
-.stat:nth-child(3) b { color:#6ee7b7; }
-.panel.playtime .progress { background:rgba(12,17,30,.9) !important; border-color:rgba(167,139,250,.3) !important; }
+/* Compact, low-contrast dark interface. */
+:host { --accent:#a3e635; --accent-2:#6ee7b7; --accent-soft:rgba(163,230,53,.12);
+        --bg:#151719; --bg-2:#1b1e20; --bg-3:#272b2d;
+        --line:#2b3032; --line-strong:#383e40;
+        --text:#edf0ed; --muted:#89918e; --soft:#c2cac5; --danger:#f07171; --ok:#62c98b; --warn:#e5b85c; }
+*, *::before, *::after { font-family:"Segoe UI","Inter",Arial,sans-serif; }
+.panel { width:344px; max-width:calc(100vw - 24px); padding:0 14px 12px; color:var(--text) !important;
+         background:linear-gradient(155deg,#1b1e20 0%,#151719 68%) !important;
+         border:1px solid #303537 !important; border-radius:13px !important;
+         box-shadow:0 18px 48px rgba(0,0,0,.48),0 1px 0 rgba(255,255,255,.025) inset !important; }
+.head { margin:0 -14px 12px !important; padding:12px 14px !important; min-height:56px;
+        align-items:center; background:transparent !important; border-bottom:1px solid var(--line) !important;
+        border-radius:12px 12px 0 0 !important; }
+.head-copy { position:relative; padding-left:32px; }
+.head-copy::before { content:""; position:absolute; left:0; top:3px; width:22px; height:22px;
+                      border-radius:7px; background:linear-gradient(145deg,#c0f36b,#75bd32); }
+.head-copy::after { content:""; position:absolute; left:6px; top:8px; width:11px; height:12px;
+                     background:#1b1e20; clip-path:polygon(55% 0,18% 54%,45% 54%,34% 100%,82% 39%,55% 39%); }
+.head-title { color:var(--text) !important; font-size:13px; font-weight:700; letter-spacing:-.02em; }
+.head-subtitle { margin-top:2px; color:var(--muted) !important; font-size:9.5px; }
+.tools { margin-left:8px; }
+.tool { width:25px; height:25px; color:var(--muted) !important; border:1px solid transparent; border-radius:7px !important; }
+.tool.close:hover { color:var(--danger) !important; background:rgba(240,113,113,.09) !important; border-color:rgba(240,113,113,.18) !important; }
+.panel.playtime .badge { display:flex; flex:0 0 auto; align-items:center; margin-left:auto; padding:4px 7px;
+                         color:var(--accent); background:rgba(163,230,53,.07); border:1px solid rgba(163,230,53,.14);
+                         border-radius:999px !important; font-size:8px; letter-spacing:.04em; }
+.panel.playtime .dot { width:5px; height:5px; background:var(--accent); box-shadow:0 0 0 2px rgba(163,230,53,.10); }
+.drawer { margin-top:0; }
+.card { padding:0; color:var(--text); background:transparent !important; border:0 !important;
+        border-radius:0 !important; box-shadow:none !important; }
+.card-head { margin:0 0 11px; padding:0 0 9px; border-bottom:1px solid var(--line) !important; }
+.card-head h4 { color:var(--soft); font-size:10px; font-weight:650; letter-spacing:.015em; }
+.grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.field:first-child { grid-column:auto; }
+.field { gap:4px; }
+.field > span { color:var(--muted) !important; font-size:8px; font-weight:600; letter-spacing:.025em; }
+input { color:var(--text) !important; background:#101213 !important; border:1px solid #303638 !important;
+        height:33px; padding:6px 8px; border-radius:7px !important; font-size:11px; }
+input:focus { border-color:rgba(163,230,53,.6) !important; box-shadow:0 0 0 2px rgba(163,230,53,.08) !important; }
+.input i { right:7px; color:#717a75; font-size:9px; }
+.input input:has(+ i) { padding-right:22px; }
+.summary { gap:0; margin-top:12px; padding:9px 0 2px; border-top:1px solid var(--line); }
+.stat { min-width:0; padding:0 7px; background:transparent !important; border:0 !important;
+        border-radius:0 !important; box-shadow:none !important; }
+.stat + .stat { border-left:1px solid var(--line) !important; }
+.stat b { color:var(--text) !important; font-size:12px; font-weight:650; }
+.stat span { margin-top:2px; color:var(--muted) !important; font-size:7px; letter-spacing:.035em; }
+.stat:nth-child(1) b, .stat:nth-child(2) b, .stat:nth-child(3) b { color:var(--soft) !important; }
+.btn { height:36px; margin-top:12px; border-radius:8px !important; font-size:10px; font-weight:700; }
+.claim { color:#18200f !important; background:var(--accent) !important; border:1px solid var(--accent) !important;
+         box-shadow:0 3px 12px rgba(163,230,53,.12) !important; }
+.claim:hover { background:#b8f257 !important; transform:translateY(-1px); box-shadow:0 5px 15px rgba(163,230,53,.18) !important; }
+.claim.running { color:var(--soft) !important; background:var(--bg-3) !important; border-color:var(--line-strong) !important; box-shadow:none !important; }
+.claim.done { color:#102017 !important; background:var(--ok) !important; border-color:var(--ok) !important; box-shadow:none !important; }
+.claim.failed { color:#fff !important; background:var(--danger) !important; border-color:var(--danger) !important; box-shadow:none !important; }
+.panel.playtime .progress { margin-top:10px; padding:9px 10px !important; background:#101213 !important;
+                            border:1px solid var(--line) !important; border-radius:8px !important; }
 .panel.playtime .progress-slider::-webkit-slider-runnable-track {
-    background:linear-gradient(90deg,#a78bfa 0%,#67e8f9 var(--progress),#252d42 var(--progress),#252d42 100%);
+    border-color:#303638; background:linear-gradient(90deg,var(--accent) 0%,var(--accent-2) var(--progress),#282d2e var(--progress),#282d2e 100%);
+    box-shadow:none;
 }
-.panel.playtime .progress-slider::-moz-range-progress { background:linear-gradient(90deg,#a78bfa,#67e8f9); }
-.credit span { color:var(--accent-2); }
-button:focus-visible { outline:2px solid var(--accent-2); outline-offset:2px; }
+.panel.playtime .progress-slider::-webkit-slider-thumb {
+    border-color:#d6f99a !important; background:var(--accent) !important; box-shadow:0 0 0 1px #101213 !important;
+}
+.panel.playtime .progress-slider::-moz-range-track { border-color:#303638; background:#282d2e; box-shadow:none; }
+.panel.playtime .progress-slider::-moz-range-progress { background:linear-gradient(90deg,var(--accent),var(--accent-2)); }
+.panel.playtime .progress-slider::-moz-range-thumb {
+    border-color:#d6f99a !important; background:var(--accent) !important; box-shadow:0 0 0 1px #101213 !important;
+}
+.panel.playtime .progress-text { margin-top:5px; color:var(--muted) !important; font-size:9px; }
+.credit { margin-top:9px; color:#69716e !important; font-size:8px; }
+.credit span { color:#9fa9a3 !important; }
+button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+@media (max-width:420px) {
+    .panel { width:calc(100vw - 24px); max-width:calc(100vw - 24px); }
+    .panel.playtime .badge { padding:3px 6px; font-size:7px; }
+}
 </style>
-<button class="mini" title="${t("showGamePresence")}">${ICON.pad}</button>
 <div class="panel mode-selecting">
   <div class="head">
     <div class="head-copy">
@@ -1550,7 +1565,6 @@ button:focus-visible { outline:2px solid var(--accent-2); outline-offset:2px; }
     </div>
     <div class="badge"><span class="dot"></span><span class="count">${t("chooseModeBadge")}</span></div>
     <div class="tools">
-      <button class="tool" data-act="minimize" title="${t("minimize")}">${ICON.min}</button>
       <button class="tool close" data-act="stop" title="${t("stop")}">${ICON.close}</button>
     </div>
   </div>
@@ -1622,7 +1636,6 @@ button:focus-visible { outline:2px solid var(--accent-2); outline-offset:2px; }
         placeAtCorner(settings.corner);
 
         let drag = null;
-        let suppressMiniClick = false;
         let dragFrame = 0;
         const applyDragPosition = (x, y) => Object.assign(host.style, {
             left: `${clamp(x, 8, innerWidth - host.offsetWidth - 8)}px`,
@@ -1632,16 +1645,12 @@ button:focus-visible { outline:2px solid var(--accent-2); outline-offset:2px; }
         const startDrag = e => {
             if (e.currentTarget === $(".head") && e.target.closest("button")) return;
             const r = host.getBoundingClientRect();
-            drag = { dx: e.clientX - r.left, dy: e.clientY - r.top, x: r.left, y: r.top,
-                startX: e.clientX, startY: e.clientY, moved: false, source: e.currentTarget };
+            drag = { dx: e.clientX - r.left, dy: e.clientY - r.top, x: r.left, y: r.top };
             panel.classList.add("dragging");
             e.currentTarget.setPointerCapture(e.pointerId);
         };
         const moveDrag = e => {
             if (!drag) return;
-            if (Math.abs(e.clientX - drag.startX) > 4 || Math.abs(e.clientY - drag.startY) > 4) {
-                drag.moved = true;
-            }
             drag.x = e.clientX - drag.dx;
             drag.y = e.clientY - drag.dy;
             if (!dragFrame) {
@@ -1653,8 +1662,6 @@ button:focus-visible { outline:2px solid var(--accent-2); outline-offset:2px; }
         };
         const endDrag = e => {
             if (!drag) return;
-            const moved = drag.moved;
-            const source = drag.source;
             if (Number.isFinite(e.clientX) && Number.isFinite(e.clientY)) {
                 drag.x = e.clientX - drag.dx;
                 drag.y = e.clientY - drag.dy;
@@ -1668,9 +1675,8 @@ button:focus-visible { outline:2px solid var(--accent-2); outline-offset:2px; }
             const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
             settings.corner = `${cy < innerHeight / 2 ? "top" : "bottom"}-${cx < innerWidth / 2 ? "left" : "right"}`;
             save();
-            if (e.type === "pointerup" && source === $(".mini") && moved) suppressMiniClick = true;
         };
-        for (const target of [$(".head"), $(".mini")]) {
+        for (const target of [$(".head")]) {
             target.addEventListener("pointerdown", startDrag);
             target.addEventListener("pointermove", moveDrag);
             target.addEventListener("pointerup", endDrag);
@@ -1725,7 +1731,6 @@ button:focus-visible { outline:2px solid var(--accent-2); outline-offset:2px; }
         }
         const actions = {
             stop,
-            minimize: () => { host.classList.add("minimized"); settings.minimized = true; save(); },
             claimAll: () => {
                 if (claimRun) {
                     claimRun.cancelled = true;
@@ -1773,25 +1778,12 @@ button:focus-visible { outline:2px solid var(--accent-2); outline-offset:2px; }
             const btn = e.target.closest("[data-act]");
             if (btn) actions[btn.dataset.act]?.();
         });
-        $(".mini").addEventListener("click", () => {
-            if (suppressMiniClick) {
-                suppressMiniClick = false;
-                return;
-            }
-            host.classList.remove("minimized");
-            settings.minimized = false;
-            save();
-        });
-
         document.body.appendChild(host);
 
         return {
             waitForMode: () => modePromise,
             setMode(mode) {
                 if (mode !== PLAYTIME_MODE) return;
-                host.classList.remove("minimized");
-                settings.minimized = false;
-                save();
                 modePicker.hidden = true;
                 panel.classList.remove("mode-selecting");
                 panel.classList.add("playtime");
